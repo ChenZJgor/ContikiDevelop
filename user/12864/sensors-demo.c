@@ -128,22 +128,22 @@ AUTOSTART_PROCESSES(&sensors_test_process);
 /*---------------------------------------------------------------------------*/
 void sendbyte(unsigned char bbyte) //发送一个字节
 {
-	PORT_FUNC_GPIO(SID_PORT, SID_PIN);
+    PORT_FUNC_GPIO(SID_PORT, SID_PIN);
     PORT_DIR_OUTPUT(SID_PORT, SID_PIN);
-	PORT_FUNC_GPIO(CLK_PORT, CLK_PIN);
+    PORT_FUNC_GPIO(CLK_PORT, CLK_PIN);
     PORT_DIR_OUTPUT(CLK_PORT, CLK_PIN);
 	
 	unsigned char i;
 	for(i=0;i<8;i++)
-		{
-			if(bbyte&0x80)//取出最高位
-				PORT_SET(SID_PORT, SID_PIN); 
-			else
-				PORT_CLEAR(SID_PORT, SID_PIN);
-	   PORT_SET(CLK_PORT, CLK_PIN); 
-	   PORT_CLEAR(CLK_PORT, CLK_PIN);
-	   bbyte <<= 1; //左移
-	   }  
+	{
+		if(bbyte&0x80)//取出最高位
+			PORT_SET(SID_PORT, SID_PIN); 
+		else
+			PORT_CLEAR(SID_PORT, SID_PIN);
+	 PORT_SET(CLK_PORT, CLK_PIN); 
+	 PORT_CLEAR(CLK_PORT, CLK_PIN);
+	 bbyte <<= 1; //左移
+	 }  
 }
 
 void write(unsigned char start, unsigned char ddata) //写指令或数据
@@ -166,8 +166,8 @@ void write(unsigned char start, unsigned char ddata) //写指令或数据
 
 void initlcm(void)
 {
-//	timer_set(&delaytimer12864, DELAY_100MS);
-//	while(!(timer_expired(&delaytimer12864)));
+	timer_set(&delaytimer12864, DELAY_100MS);
+	while(!(timer_expired(&delaytimer12864)));
 	write(COMMAND, 0x30);//功能设置，一次送8位数据，基本指令集
 	write(COMMAND, 0x0C);//0000,1100 整体显示，游标off，游标位置off
 	write(COMMAND, 0x01);//0000,0001 清DDRAM

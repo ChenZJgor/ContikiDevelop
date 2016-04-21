@@ -13,7 +13,7 @@
 #include "dev/clock-isr.h"
 #include "dev/port2.h"
 #include "dev/port.h"
-#include "DHT11.h"
+#include "dev/DHT11.h"
 #include "dev/lpm.h"
 #include "dev/button-sensor.h"
 #include "dev/adc-sensor.h"
