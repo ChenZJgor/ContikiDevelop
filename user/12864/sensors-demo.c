@@ -157,11 +157,11 @@ void write(unsigned char start, unsigned char ddata) //写指令或数据
 	Hdata = ddata&0xf0;    //取高四位
 	Ldata = (ddata<<4)&0xf0;  //取低四位
 	sendbyte(start_data);   //发送起始信号
-	clock_delay_usec(50); //延时是必须的
+	clock_delay_usec(100); //延时是必须的
 	sendbyte(Hdata);       //发送高四位
-	clock_delay_usec(50);  //延时是必须的
+	clock_delay_usec(100);  //延时是必须的
 	sendbyte(Ldata);    //发送低四位
-	clock_delay_usec(50);  //延时是必须的
+	clock_delay_usec(100);  //延时是必须的
 }
 
 void initlcm(void)
