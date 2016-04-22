@@ -246,7 +246,7 @@ main(void)
 
   autostart_start(autostart_processes);
 
-  //watchdog_start();
+  watchdog_start();
 
   fade(LEDS_YELLOW);
 

@@ -96,11 +96,16 @@ static uip_ipaddr_t server_ipaddr;
 static unsigned char flag = 0;
 static struct timer delaytimer;
 static struct timer delaytimer12864;
-static unsigned char ucharFLAG,uchartemp;
+static unsigned char ucharFLAG, uchartemp;
 static unsigned char ucharcomdata = 0;
 static unsigned char ucharT_data_H,ucharT_data_L,ucharRH_data_H,ucharRH_data_L,ucharcheckdata;
 static unsigned char ucharT_data_H_temp,ucharT_data_L_temp,ucharRH_data_H_temp,ucharRH_data_L_temp,ucharcheckdata_temp;
 static unsigned char senddata[4];
+void (*current_operation_index)();
+void write(unsigned char start, unsigned char ddata);
+void display(unsigned char x_add,unsigned char dat1,unsigned char dat2);
+void clrram(void);
+static unsigned char func_index=0;
 //static int dec;
 //static float frac;
 
@@ -125,6 +130,165 @@ AUTOSTART_PROCESSES(&buttons_test_process);
 AUTOSTART_PROCESSES(&sensors_test_process);
 #endif
 
+/*---------------------------------------------------------------------------*/
+void fun1(void)
+{
+        clrram();
+        display(0x82,0xb9,0xa6); 
+        display(0x83,0xc4,0xdc); 
+        display(0x84,0xb2,0xcb);
+        display(0x85,0xb5,0xa5);
+        
+        write(COMMAND, 0x90);
+        write(DATA, 0x31);
+        write(DATA, 0x2e);
+        display(0x91,0xa1,0xbe);
+        display(0x92,0xb4,0xab);
+        display(0x93,0xb8,0xd0);
+        display(0x94,0xc6,0xf7);
+        display(0x95,0xa1,0xbf);
+        
+	write(COMMAND, 0x88); //设置液晶屏的显示地址,下同.
+        write(DATA, 0x32);
+        write(DATA, 0x2e);
+        display(0x8a,0xca,0xb1);
+        display(0x8b,0xbc,0xe4);
+        
+        write(COMMAND, 0x98);
+        write(DATA, 0x33);
+        write(DATA, 0x2e);
+        display(0x9a,0xc9,0xe8);
+        display(0x9b,0xd6,0xc3);
+      
+}
+
+void fun2(void)
+{
+        clrram();
+        display(0x82,0xb9,0xa6); 
+        display(0x83,0xc4,0xdc); 
+        display(0x84,0xb2,0xcb);
+        display(0x85,0xb5,0xa5);
+        
+        write(COMMAND, 0x90);
+        write(DATA, 0x31);
+        write(DATA, 0x2e);
+        display(0x92,0xb4,0xab);
+        display(0x93,0xb8,0xd0);
+        display(0x94,0xc6,0xf7);
+        
+	write(COMMAND, 0x88); //设置液晶屏的显示地址,下同.
+        write(DATA, 0x32);
+        write(DATA, 0x2e);
+        display(0x89,0xa1,0xbe);
+        display(0x8a,0xca,0xb1);
+        display(0x8b,0xbc,0xe4);
+        display(0x8c,0xa1,0xbf);
+        
+        write(COMMAND, 0x98);
+        write(DATA, 0x33);
+        write(DATA, 0x2e);
+        display(0x9a,0xc9,0xe8);
+        display(0x9b,0xd6,0xc3);
+}
+
+void fun3(void)
+{
+        clrram();
+        display(0x82,0xb9,0xa6); 
+        display(0x83,0xc4,0xdc); 
+        display(0x84,0xb2,0xcb);
+        display(0x85,0xb5,0xa5);
+        
+        write(COMMAND, 0x90);
+        write(DATA, 0x31);
+        write(DATA, 0x2e);
+        display(0x92,0xb4,0xab);
+        display(0x93,0xb8,0xd0);
+        display(0x94,0xc6,0xf7);
+        
+	write(COMMAND, 0x88); //设置液晶屏的显示地址,下同.
+        write(DATA, 0x32);
+        write(DATA, 0x2e);
+        display(0x8a,0xca,0xb1);
+        display(0x8b,0xbc,0xe4);
+        
+        write(COMMAND, 0x98);
+        write(DATA, 0x33);
+        write(DATA, 0x2e);
+        display(0x99,0xa1,0xbe);
+        display(0x9a,0xc9,0xe8);
+        display(0x9b,0xd6,0xc3);
+        display(0x9c,0xa1,0xbf);
+}
+/*---------------------------------------------------------------------------*/
+typedef struct
+{
+
+	unsigned char current;
+	unsigned char up;//向上翻索引号
+	unsigned char down;//向下翻索引号
+	unsigned char enter;//确认索引号
+	void (*current_operation)();
+
+}key_table;
+/*---------------------------------------------------------------------------*/
+key_table table[30]=
+{
+	
+	{0,2,1,4,(*fun1)},//第一层，显示功能菜单、【传感器】、时间、设置
+
+	{1,0,2,8,(*fun2)},//第一层，显示功能菜单、传感器、【时间】、设置
+
+	{2,1,0,12,(*fun3)},//第一层，显示功能菜单、传感器、时间、【设置】                     
+/*
+	{3,2,0,25,(*fun4)},//第一层，显示清华大学、北京大学、重庆三峡学院、【返回】
+
+	{4,7,5,16,(*fun5)},//第二层，清华大学层下显示【地点】、创建时间、简介、返回                                                   
+
+	{5,4,6,17,(*fun6)},//第二层，清华大学层下显示地点、【创建时间】、简介、返回      
+
+	{6,5,7,18,(*fun7)}, //第二层，清华大学层下显示地点、创建时间、【简介】、返回                                                                             
+
+	{7,6,4,0,(*fun8)},//第二层，清华大学层下显示地点、创建时间、简介、【返回】      
+
+	{8,11,9,19,(*fun9)},//第二层，北京大学层下显示【历史】、政治、简介、返回                                                
+
+	{9,8,10,20,(*fun10)},//第二层，北京大学层下显示历史、【政治】、简介、返回  
+
+	{10,9,11,21,(*fun11)}, //第二层，北京大学层下显示历史、政治、【简介】、返回                                                                                
+
+	{11,10,8,1,(*fun12)},//第二层，北京大学层下显示历史、政治、简介、【返回】         
+
+	{12,15,13,22,(*fun13)},//第二层，重庆三峡学院层下显示【简介】、最佳院系、最佳实验室、返回                                                        
+
+	{13,12,14,23,(*fun14)}, //第二层，重庆三峡学院层下显示简介、【最佳院系】、最佳实验室、返回                                                               
+
+	{14,13,15,24,(*fun15)}, //第二层，重庆三峡学院层下显示简介、最佳院系、【最佳实验室】、返回                                                               
+
+	{15,14,12,2,(*fun16)}, //第二层，重庆三峡学院层下显示简介、最佳院系、最佳实验室、【返回】   
+
+	{16,16,16,4,(*fun17)}, //第三层，清华大学地点层                                                                    
+
+	{17,17,17,5,(*fun18)}, //第三层，清华大学创时间层                                                      
+
+	{18,18,18,6,(*fun19)}, //第三层，清华大学简介层
+
+	{19,19,19,8,(*fun20)}, //第三层，北京大学历史层                                                                    
+
+	{20,20,20,9,(*fun21)}, //第三层，北京大学政治层                                                           
+
+	{21,21,21,10,(*fun22)}, //第三层，北京大学简介层
+
+	{22,22,22,12,(*fun23)}, //第三层，重庆三峡学院简介层                                                                  
+
+	{23,23,23,13,(*fun24)}, //第三层，重庆三峡学院最佳院系层                                                        
+
+	{24,24,24,14,(*fun25)}, //第三层，重庆三峡学院最佳实验室层        
+
+	{25,25,25,0,(*fun26)}, //第0层      
+*/																
+};
 /*---------------------------------------------------------------------------*/
 void sendbyte(unsigned char bbyte) //发送一个字节
 {
@@ -162,6 +326,13 @@ void write(unsigned char start, unsigned char ddata) //写指令或数据
 	clock_delay_usec(100);  //延时是必须的
 	sendbyte(Ldata);    //发送低四位
 	clock_delay_usec(100);  //延时是必须的
+}
+
+void clrram(void)
+{
+  write(COMMAND,0x30);
+  write(COMMAND,0x01); //清除显示指令。
+  clock_delay_usec(1000);
 }
 
 void initlcm(void)
@@ -242,7 +413,7 @@ void COM(void)    // 温湿写入
     unsigned char i;         
     for(i=0;i<8;i++)    
     {
-        ucharFLAG=2; 
+        unsigned charFLAG=2; 
         while((!(PORT_READ(DHT11_DATA_PORT, DHT11_DATA_PIN)))&&ucharFLAG++);
         clock_delay_usec(30);
         uchartemp=0;
@@ -579,11 +750,21 @@ PROCESS_THREAD(buttons_test_process, ev, data)
       }
     }
     if(ev == sensors_event){
-		sensor = (struct sensors_sensor *)data;
-		if(sensor == &button_sensor){
-
-		}
+	sensor = (struct sensors_sensor *)data;
+	if(sensor == &button_sensor){
+            func_index=table[func_index].up;
 	}
+        
+        if(sensor == &button_2_sensor){
+            func_index=table[func_index].down;
+	}
+        if(sensor == &button_3_sensor){
+            func_index=table[func_index].enter;
+	}
+        
+        current_operation_index=table[func_index].current_operation;
+        (*current_operation_index)();//执行当前操作函数
+    }
     if(ev == serial_line_event_message) {
       char *line;
       line = (char *)data;

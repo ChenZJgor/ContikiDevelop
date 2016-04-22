@@ -88,13 +88,14 @@ configure_b1(int type, int value)
 /*---------------------------------------------------------------------------*/
 /* Button 2 - cc2531 USb Dongle only */
 /*---------------------------------------------------------------------------*/
-#if MODELS_CONF_CC2531_USB_STICK
+
 static int
 value_b2(int type)
 {
   type;
   return BUTTON_READ(2) || !timer_expired(&debouncetimer);
 }
+
 /*---------------------------------------------------------------------------*/
 static int
 status_b2(int type)
@@ -112,6 +113,7 @@ configure_b2(int type, int value)
 {
   switch(type) {
   case SENSORS_HW_INIT:
+  	P0INP |= 0X10;
     BUTTON_IRQ_ON_PRESS(2);
     BUTTON_FUNC_GPIO(2);
     BUTTON_DIR_INPUT(2);
@@ -130,7 +132,55 @@ configure_b2(int type, int value)
   }
   return 0;
 }
-#endif
+
+/*---------------------------------------------------------------------------*/
+/* Button 3 -  */
+/*---------------------------------------------------------------------------*/
+static int
+value_b3(int type)
+{
+  type;
+  return BUTTON_READ(3) || !timer_expired(&debouncetimer);
+}
+/*---------------------------------------------------------------------------*/
+static int
+status_b3(int type)
+{
+  switch(type) {
+  case SENSORS_ACTIVE:
+  case SENSORS_READY:
+    return BUTTON_IRQ_ENABLED(3);
+  }
+  return 0;
+}
+/*---------------------------------------------------------------------------*/
+static int
+configure_b3(int type, int value)
+{
+  switch(type) {
+  case SENSORS_HW_INIT:
+
+    P0INP |= 1; /* Tri-state */
+
+    BUTTON_IRQ_ON_PRESS(1);
+    BUTTON_FUNC_GPIO(1);
+    BUTTON_DIR_INPUT(1);
+    return 1;
+  case SENSORS_ACTIVE:
+    if(value) {
+      if(!BUTTON_IRQ_ENABLED(3)) {
+        timer_set(&debouncetimer, 0);
+        BUTTON_IRQ_FLAG_OFF(3);
+        BUTTON_IRQ_ENABLE(3);
+      }
+    } else {
+      BUTTON_IRQ_DISABLE(3);
+    }
+    return 1;
+  }
+  return 0;
+}
+
 /*---------------------------------------------------------------------------*/
 /* ISRs */
 /*---------------------------------------------------------------------------*/
@@ -182,12 +232,25 @@ __interrupt void port_0_isr(void)
    * button's pin. */
   if(BUTTON_IRQ_CHECK(1)) {
     if(timer_expired(&debouncetimer)) {
-      timer_set(&debouncetimer, CLOCK_SECOND / 8);
+      timer_set(&debouncetimer, CLOCK_SECOND / 4);
       sensors_changed(&button_sensor);
     }
+  }else if(BUTTON_IRQ_CHECK(2)) {
+    if(timer_expired(&debouncetimer)) {
+      timer_set(&debouncetimer, CLOCK_SECOND / 4);
+      sensors_changed(&button_2_sensor);
+    }
+  }else if(BUTTON_IRQ_CHECK(3)) {
+    if(timer_expired(&debouncetimer)) {
+      timer_set(&debouncetimer, CLOCK_SECOND / 4);
+      sensors_changed(&button_3_sensor);
+    }
   }
+  
 
   BUTTON_IRQ_FLAG_OFF(1);
+  BUTTON_IRQ_FLAG_OFF(2);
+  BUTTON_IRQ_FLAG_OFF(3);
 
   ENERGEST_OFF(ENERGEST_TYPE_IRQ);
   EA = 1;
@@ -196,6 +259,8 @@ __interrupt void port_0_isr(void)
 //#pragma restore
 /*---------------------------------------------------------------------------*/
 SENSORS_SENSOR(button_1_sensor, BUTTON_SENSOR, value_b1, configure_b1, status_b1);
-#if MODELS_CONF_CC2531_USB_STICK
+
 SENSORS_SENSOR(button_2_sensor, BUTTON_SENSOR, value_b2, configure_b2, status_b2);
-#endif
+
+SENSORS_SENSOR(button_3_sensor, BUTTON_SENSOR, value_b3, configure_b3, status_b3);
+

@@ -47,11 +47,13 @@ const struct sensors_sensor *sensors[] = {
 #endif
 #if BUTTON_SENSOR_ON
   &button_1_sensor,
-#if MODELS_CONF_CC2531_USB_STICK
+
   &button_2_sensor,
+  
+  &button_3_sensor,
+
 #endif
-#endif
-  0
+	0
 };
 
 unsigned char sensors_flags[(sizeof(sensors) / sizeof(struct sensors_sensor *))];
