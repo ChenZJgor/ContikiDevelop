@@ -106,6 +106,20 @@ void write(unsigned char start, unsigned char ddata);
 void display(unsigned char x_add,unsigned char dat1,unsigned char dat2);
 void clrram(void);
 static unsigned char func_index=0;
+
+typedef struct
+{
+
+	unsigned char current;
+	unsigned char up;//向上翻索引号
+	unsigned char down;//向下翻索引号
+	unsigned char enter;//确认索引号
+	void (*current_operation)();
+
+}key_table;
+/*---------------------------------------------------------------------------*/
+
+unsigned char GET_DHT11DATA(void);
 //static int dec;
 //static float frac;
 
@@ -129,8 +143,10 @@ AUTOSTART_PROCESSES(&buttons_test_process);
 #else
 AUTOSTART_PROCESSES(&sensors_test_process);
 #endif
-
 /*---------------------------------------------------------------------------*/
+
+extern key_table table[30];
+
 void fun1(void)
 {
         clrram();
@@ -221,41 +237,240 @@ void fun3(void)
         display(0x9b,0xd6,0xc3);
         display(0x9c,0xa1,0xbf);
 }
-/*---------------------------------------------------------------------------*/
-typedef struct
+
+void fun4(void)
 {
+        clrram();
+        display(0x80,0xa1,0xbe);
+        display(0x81,0xce,0xc2); 
+        display(0x82,0xca,0xaa); 
+        display(0x83,0xb6,0xc8);
+        display(0x84,0xb4,0xab);
+        display(0x85,0xb8,0xd0);
+        display(0x86,0xc6,0xf7);
+        display(0x87,0xa1,0xbf);
+        
+        display(0x91,0xd1,0xcc);
+        display(0x92,0xce,0xed);
+        display(0x93,0xb4,0xab);
+        display(0x94,0xb8,0xd0);
+        display(0x95,0xc6,0xf7);
+        
+        display(0x89,0xc3,0xc5);
+        display(0x8a,0xb4,0xc5);
+        display(0x8b,0xb4,0xab);
+        display(0x8c,0xb8,0xd0);
+        display(0x8d,0xc6,0xf7);
+        
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);
+}
 
-	unsigned char current;
-	unsigned char up;//向上翻索引号
-	unsigned char down;//向下翻索引号
-	unsigned char enter;//确认索引号
-	void (*current_operation)();
+void fun5(void)
+{
+        clrram();
 
-}key_table;
+        display(0x81,0xce,0xc2); 
+        display(0x82,0xca,0xaa); 
+        display(0x83,0xb6,0xc8);
+        display(0x84,0xb4,0xab);
+        display(0x85,0xb8,0xd0);
+        display(0x86,0xc6,0xf7);
+ 
+        display(0x90,0xa1,0xbe);
+        display(0x91,0xd1,0xcc);
+        display(0x92,0xce,0xed);
+        display(0x93,0xb4,0xab);
+        display(0x94,0xb8,0xd0);
+        display(0x95,0xc6,0xf7);
+        display(0x96,0xa1,0xbf);
+        
+        display(0x89,0xc3,0xc5);
+        display(0x8a,0xb4,0xc5);
+        display(0x8b,0xb4,0xab);
+        display(0x8c,0xb8,0xd0);
+        display(0x8d,0xc6,0xf7);
+        
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);
+}
+
+void fun6(void)
+{
+        clrram();
+
+        display(0x81,0xce,0xc2); 
+        display(0x82,0xca,0xaa); 
+        display(0x83,0xb6,0xc8);
+        display(0x84,0xb4,0xab);
+        display(0x85,0xb8,0xd0);
+        display(0x86,0xc6,0xf7); 
+
+        display(0x91,0xd1,0xcc);
+        display(0x92,0xce,0xed);
+        display(0x93,0xb4,0xab);
+        display(0x94,0xb8,0xd0);
+        display(0x95,0xc6,0xf7);
+
+        display(0x88,0xa1,0xbe);        
+        display(0x89,0xc3,0xc5);
+        display(0x8a,0xb4,0xc5);
+        display(0x8b,0xb4,0xab);
+        display(0x8c,0xb8,0xd0);
+        display(0x8d,0xc6,0xf7);
+        display(0x8e,0xa1,0xbf);
+        
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);
+}
+
+void fun7(void)
+{
+        clrram();
+
+        display(0x81,0xce,0xc2); //温
+        display(0x82,0xca,0xaa); //湿
+        display(0x83,0xb6,0xc8); //度
+        display(0x84,0xb4,0xab); //传
+        display(0x85,0xb8,0xd0); //感
+        display(0x86,0xc6,0xf7); //器
+
+        display(0x91,0xd1,0xcc);
+        display(0x92,0xce,0xed);
+        display(0x93,0xb4,0xab);
+        display(0x94,0xb8,0xd0);
+        display(0x95,0xc6,0xf7);
+       
+        display(0x89,0xc3,0xc5);
+        display(0x8a,0xb4,0xc5);
+        display(0x8b,0xb4,0xab);
+        display(0x8c,0xb8,0xd0);
+        display(0x8d,0xc6,0xf7);
+
+
+        display(0x98,0xa1,0xbe);         
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);        
+        display(0x9b,0xa1,0xbf);        
+}
+
+void fun8(void)
+{
+        clrram();
+
+        display(0x80,0xcf,0xd6); 
+        display(0x81,0xd4,0xda); 
+        display(0x82,0xb5,0xc4);
+        display(0x83,0xce,0xc2);
+        display(0x84,0xb6,0xc8);
+        display(0x85,0xca,0xc7);
+        write(COMMAND, 0x86);
+        write(DATA, 0x3a);
+        write(DATA, 0x20);
+        write(COMMAND, 0x87);
+        write(DATA, senddata[0]);
+        write(DATA, senddata[1]);
+
+        display(0x90,0xcf,0xd6); 
+        display(0x91,0xd4,0xda); 
+        display(0x92,0xb5,0xc4);
+        display(0x93,0xca,0xaa);
+        display(0x94,0xb6,0xc8);
+        display(0x95,0xca,0xc7);
+        write(COMMAND, 0x96);
+        write(DATA, 0x3a);
+        write(DATA, 0x20);
+        write(COMMAND, 0x97);
+        write(DATA, senddata[2]);
+        write(DATA, senddata[3]);
+       
+        display(0x88,0xa1,0xbe); 
+        display(0x89,0xd6,0xd8);//重
+        display(0x8a,0xd0,0xc2);//新
+        display(0x8b,0xbb,0xf1);//获
+        display(0x8c,0xc8,0xa1);//取
+        display(0x8d,0xa1,0xbf);
+
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);   
+}
+
+void fun9(void)
+{
+        clrram();
+
+        display(0x80,0xcf,0xd6); 
+        display(0x81,0xd4,0xda); 
+        display(0x82,0xb5,0xc4);
+        display(0x83,0xce,0xc2);
+        display(0x84,0xb6,0xc8);
+        display(0x85,0xca,0xc7);
+        write(COMMAND, 0x86);
+        write(DATA, 0x3a);
+        write(DATA, 0x20);
+        write(COMMAND, 0x87);
+        write(DATA, senddata[0]);
+        write(DATA, senddata[1]);        
+
+        display(0x90,0xcf,0xd6); 
+        display(0x91,0xd4,0xda); 
+        display(0x92,0xb5,0xc4);
+        display(0x93,0xca,0xaa);
+        display(0x94,0xb6,0xc8);
+        display(0x95,0xca,0xc7);
+        write(COMMAND, 0x96);
+        write(DATA, 0x3a);
+        write(DATA, 0x20);
+        write(DATA, senddata[2]);
+        write(DATA, senddata[3]);        
+       
+        display(0x89,0xd6,0xd8);//重
+        display(0x8a,0xd0,0xc2);//新
+        display(0x8b,0xbb,0xf1);//获
+        display(0x8c,0xc8,0xa1);//取
+
+
+        display(0x98,0xa1,0xbe);         
+        display(0x99,0xb7,0xb5);
+        display(0x9a,0xbb,0xd8);
+        display(0x9b,0xa1,0xbf);        
+}
+
+void fun10(void)
+{
+        GET_DHT11DATA();
+        
+        func_index = 7;
+        
+        current_operation_index=table[func_index].current_operation;
+        (*current_operation_index)();
+}
+
 /*---------------------------------------------------------------------------*/
+
 key_table table[30]=
 {
 	
-	{0,2,1,4,(*fun1)},//第一层，显示功能菜单、【传感器】、时间、设置
+	{0,2,1,3,(*fun1)},//第一层，显示功能菜单、【传感器】、时间、设置
 
-	{1,0,2,8,(*fun2)},//第一层，显示功能菜单、传感器、【时间】、设置
+	{1,0,2,0,(*fun2)},//第一层，显示功能菜单、传感器、【时间】、设置
 
-	{2,1,0,12,(*fun3)},//第一层，显示功能菜单、传感器、时间、【设置】                     
+	{2,1,0,0,(*fun3)},//第一层，显示功能菜单、传感器、时间、【设置】                     
+
+	{3,6,4,7,(*fun4)},//第二层，显示【温湿度传感器】、烟雾传感器、门磁传感器、返回
+
+	{4,3,5,0,(*fun5)},//第二层，显示温湿度传感器、【烟雾传感器】、门磁传感器、返回                                                   
+
+	{5,4,6,0,(*fun6)},//第二层，显示温湿度传感器、烟雾传感器、【门磁传感器】、返回      
+
+	{6,5,3,0,(*fun7)}, //第二层，显示温湿度传感器、烟雾传感器、门磁传感器、【返回】                                                                             
+
+	{7,8,8,9,(*fun8)},//第三层，显示现在的温度是、现在的湿度是、【重新获取】、返回      
+
+	{8,7,7,3,(*fun9)},//第三层，显示现在的温度是、现在的湿度是、重新获取、【返回】                                                
+
+	{9,9,9,9,(*fun10)},//功能函数，获取温湿度  
 /*
-	{3,2,0,25,(*fun4)},//第一层，显示清华大学、北京大学、重庆三峡学院、【返回】
-
-	{4,7,5,16,(*fun5)},//第二层，清华大学层下显示【地点】、创建时间、简介、返回                                                   
-
-	{5,4,6,17,(*fun6)},//第二层，清华大学层下显示地点、【创建时间】、简介、返回      
-
-	{6,5,7,18,(*fun7)}, //第二层，清华大学层下显示地点、创建时间、【简介】、返回                                                                             
-
-	{7,6,4,0,(*fun8)},//第二层，清华大学层下显示地点、创建时间、简介、【返回】      
-
-	{8,11,9,19,(*fun9)},//第二层，北京大学层下显示【历史】、政治、简介、返回                                                
-
-	{9,8,10,20,(*fun10)},//第二层，北京大学层下显示历史、【政治】、简介、返回  
-
 	{10,9,11,21,(*fun11)}, //第二层，北京大学层下显示历史、政治、【简介】、返回                                                                                
 
 	{11,10,8,1,(*fun12)},//第二层，北京大学层下显示历史、政治、简介、【返回】         
@@ -287,7 +502,7 @@ key_table table[30]=
 	{24,24,24,14,(*fun25)}, //第三层，重庆三峡学院最佳实验室层        
 
 	{25,25,25,0,(*fun26)}, //第0层      
-*/																
+	*/														
 };
 /*---------------------------------------------------------------------------*/
 void sendbyte(unsigned char bbyte) //发送一个字节
@@ -429,8 +644,7 @@ void COM(void)    // 温湿写入
 }
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
-static unsigned char
-GET_DHT11DATA(void)
+unsigned char GET_DHT11DATA(void)
 {
     PORT_FUNC_GPIO(DHT11_DATA_PORT, DHT11_DATA_PIN);
     PORT_DIR_OUTPUT(DHT11_DATA_PORT, DHT11_DATA_PIN);
@@ -465,11 +679,11 @@ GET_DHT11DATA(void)
         ucharT_data_L=ucharT_data_L_temp;
         ucharcheckdata=ucharcheckdata_temp;
       }
-        senddata[0]=ucharT_data_H/10; 
-        senddata[1]=ucharT_data_H%10;
+        senddata[0]=ucharT_data_H/10 + 0x30; 
+        senddata[1]=ucharT_data_H%10 + 0x30;
         
-        senddata[2]=ucharRH_data_H/10; 
-        senddata[3]=ucharRH_data_H%10;
+        senddata[2]=ucharRH_data_H/10 + 0x30; 
+        senddata[3]=ucharRH_data_H%10 + 0x30;
         printf("shidu is %d%d,wendu is %d%d\n",senddata[2],senddata[3],senddata[0],senddata[1]);
         return 1;
     }
@@ -739,7 +953,7 @@ PROCESS_THREAD(buttons_test_process, ev, data)
         state = GET_DHT11DATA();
         if(state){
           for(i = 0; i < 4; i++){
-            buf[i] = senddata[i] + 0x30;
+            buf[i] = senddata[i];
           }
           buf[4] = 0;
           uip_udp_packet_sendto(client_conn, buf, strlen(buf),
