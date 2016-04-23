@@ -10,10 +10,8 @@
 #define INIT_TIME 3
 #define DHT11_DATA_PORT_HIGH 1
 
-extern const struct sensors_sensor dht11_sensor;
-static unsigned char DATA_HIGH=0,DATA_LOW=0;
+extern unsigned char senddata[4];
 
-#define DHT11_SENSOR "DHT"
-#define DHT11ACTIVE() dht11_sensor.configure(SENSORS_ACTIVE, 1)
+extern unsigned char GET_DHT11DATA(void);
 
 #endif /* dht11.h */
