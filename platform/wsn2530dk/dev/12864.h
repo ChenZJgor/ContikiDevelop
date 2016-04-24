@@ -25,7 +25,8 @@ typedef struct
 
 extern key_table table[30];
 
-extern unsigned char senddata[4];
+//extern unsigned char senddata[4];
+extern unsigned char dht11data[4];
 
 extern unsigned char func_index;
 

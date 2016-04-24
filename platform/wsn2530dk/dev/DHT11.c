@@ -15,7 +15,7 @@ void COM(void)    // 温湿写入
     unsigned char i;         
     for(i=0;i<8;i++)    
     {
-        unsigned charFLAG=2; 
+        ucharFLAG=2; 
         while((!(PORT_READ(DHT11_DATA_PORT, DHT11_DATA_PIN)))&&ucharFLAG++);
         clock_delay_usec(30);
         uchartemp=0;
@@ -70,7 +70,7 @@ unsigned char GET_DHT11DATA(void)
         
         senddata[2]=ucharRH_data_H/10 + 0x30; 
         senddata[3]=ucharRH_data_H%10 + 0x30;
-        printf("shidu is %d%d,wendu is %d%d\n",senddata[2],senddata[3],senddata[0],senddata[1]);
+//        PRINTF("shidu is %x%x,wendu is %x%x\n",senddata[2],senddata[3],senddata[0],senddata[1]);
         return 1;
     }
     else //没用成功读取，返�?

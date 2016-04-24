@@ -47,6 +47,8 @@
 #include <ctype.h>
 #include "collect-common.h"
 #include "collect-view.h"
+#include "dev/12864.h"
+#include "dev/dht11.h"
 
 #define DEBUG DEBUG_PRINT 
 #include "net/uip-debug.h"
@@ -63,6 +65,10 @@ static struct uip_udp_conn *server_conn;
 static uint8_t mt_packet[MT_PACKET_LEN];
 static process_event_t blink_event;
 static uint8_t sta = 0;
+unsigned char func_index = 0;
+unsigned char dht11data[4] = {0};
+
+extern void (*current_operation_index)();
 
 PROCESS(udp_server_process, "UDP server process");
 AUTOSTART_PROCESSES(&udp_server_process);
@@ -129,11 +135,15 @@ static void
 tcpip_handler(void)
 {
   char *appdata;
+  unsigned char i;
   blink_event = process_alloc_event();
 
   if(uip_newdata()) {
     appdata = (char *)uip_appdata;
     appdata[uip_datalen()] = 0;
+    for(i = 0; i < 4; i++){
+      dht11data[i] = *(appdata + i);
+    }
     PRINTF("DATA recv '%s' from ", appdata);
     PRINTF("%d",
            UIP_IP_BUF->srcipaddr.u8[sizeof(UIP_IP_BUF->srcipaddr.u8) - 1]);
@@ -193,6 +203,7 @@ print_local_addresses(void)
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(udp_server_process, ev, data)
 {
+  struct sensors_sensor *sensor;
   uip_ipaddr_t ipaddr;
   struct uip_ds6_addr *root_if;
   static struct etimer timer;
@@ -238,9 +249,27 @@ PROCESS_THREAD(udp_server_process, ev, data)
   PRINTF("\r\n");
   PRINTF(" local/remote port %u/%u\r\n", UIP_HTONS(server_conn->lport),
          UIP_HTONS(server_conn->rport));
+  initlcm();
+  set_wenzi();
 
   while(1) {
     PROCESS_YIELD();
+        if(ev == sensors_event){
+	sensor = (struct sensors_sensor *)data;
+	if(sensor == &button_sensor){
+            func_index=table[func_index].up;
+	}
+        
+        if(sensor == &button_2_sensor){
+            func_index=table[func_index].down;
+	}
+        if(sensor == &button_3_sensor){
+            func_index=table[func_index].enter;
+	}
+        
+        current_operation_index=table[func_index].current_operation;
+        (*current_operation_index)();//执行当前操作函数
+        }
     if(ev == tcpip_event) {
       tcpip_handler();
     } else if (ev == blink_event) {

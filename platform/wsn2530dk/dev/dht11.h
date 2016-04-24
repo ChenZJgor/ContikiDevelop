@@ -5,8 +5,8 @@
 #include "contiki-conf.h"
 #include "lib/sensors.h"
 
-#define DHT11_DATA_PORT 0
-#define DHT11_DATA_PIN 7
+#define DHT11_DATA_PORT 1
+#define DHT11_DATA_PIN 6
 #define INIT_TIME 3
 #define DHT11_DATA_PORT_HIGH 1
 

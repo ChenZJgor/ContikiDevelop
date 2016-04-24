@@ -64,7 +64,7 @@
 #else
 #include "dev/uart0.h"
 #include "dev/uart1.h"
-#define IO_ARCH_PREFIX uart1
+#define IO_ARCH_PREFIX uart0
 #define io_arch_flush()
 #endif
 /*---------------------------------------------------------------------------*/

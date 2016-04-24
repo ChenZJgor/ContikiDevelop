@@ -350,7 +350,7 @@ PROCESS_THREAD(buttons_test_process, ev, data)
       sprintf(buf, "hello");
         uip_udp_packet_sendto(client_conn, &buf, sizeof(buf),
                         &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));*/
-/*        state = GET_DHT11DATA();
+        state = GET_DHT11DATA();
         if(state){
           for(i = 0; i < 4; i++){
             buf[i] = senddata[i];
@@ -360,7 +360,7 @@ PROCESS_THREAD(buttons_test_process, ev, data)
                       &server_ipaddr, UIP_HTONS(UDP_SERVER_PORT));
           state = 0;
         }
-*/      
+      
       etimer_reset(&et);
     }
    

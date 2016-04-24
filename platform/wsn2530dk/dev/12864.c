@@ -229,8 +229,8 @@ void fun8(void) //第三层，显示现在的温度是、现在的湿度是、【重新获取】、返回
         write(DATA, 0x3a);
         write(DATA, 0x20);
         write(COMMAND, 0x87);
-        write(DATA, senddata[0]);
-        write(DATA, senddata[1]);
+        write(DATA, dht11data[0]);
+        write(DATA, dht11data[1]);
 
         display(0x90,0xcf,0xd6); 
         display(0x91,0xd4,0xda); 
@@ -242,8 +242,8 @@ void fun8(void) //第三层，显示现在的温度是、现在的湿度是、【重新获取】、返回
         write(DATA, 0x3a);
         write(DATA, 0x20);
         write(COMMAND, 0x97);
-        write(DATA, senddata[2]);
-        write(DATA, senddata[3]);
+        write(DATA, dht11data[2]);
+        write(DATA, dht11data[3]);
        
         display(0x88,0xa1,0xbe); 
         display(0x89,0xd6,0xd8);//重
@@ -270,8 +270,8 @@ void fun9(void) //第三层，显示现在的温度是、现在的湿度是、重新获取、【返回】
         write(DATA, 0x3a);
         write(DATA, 0x20);
         write(COMMAND, 0x87);
-        write(DATA, senddata[0]);
-        write(DATA, senddata[1]);        
+        write(DATA, dht11data[0]);
+        write(DATA, dht11data[1]);        
 
         display(0x90,0xcf,0xd6); 
         display(0x91,0xd4,0xda); 
@@ -282,8 +282,8 @@ void fun9(void) //第三层，显示现在的温度是、现在的湿度是、重新获取、【返回】
         write(COMMAND, 0x96);
         write(DATA, 0x3a);
         write(DATA, 0x20);
-        write(DATA, senddata[2]);
-        write(DATA, senddata[3]);        
+        write(DATA, dht11data[2]);
+        write(DATA, dht11data[3]);        
        
         display(0x89,0xd6,0xd8);//重
         display(0x8a,0xd0,0xc2);//新
@@ -299,7 +299,7 @@ void fun9(void) //第三层，显示现在的温度是、现在的湿度是、重新获取、【返回】
 
 void fun10(void) //功能函数，获取温湿度 
 {
-        GET_DHT11DATA();
+//        GET_DHT11DATA();
         
         func_index = 7;
         
